@@ -1,0 +1,43 @@
+{
+  "action": "opened",
+  "issue": {
+    "url": "https://api.github.com/repos/angelatyk/i-assignment/issues/101",
+    "repository_url": "https://api.github.com/repos/angelatyk/i-assignment",
+    "html_url": "https://github.com/angelatyk/i-assignment/issues/101",
+    "id": 1000001,
+    "number": 101,
+    "title": "Prescription Safety: Drug Interaction Checker",
+    "user": {
+      "login": "business-analyst-user",
+      "id": 501,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "name": "feature",
+        "color": "a2eeef"
+      },
+      {
+        "name": "high-priority",
+        "color": "d73a4a"
+      }
+    ],
+    "state": "open",
+    "body": "## Summary\r\nWe need a way for clinicians to quickly verify if a new medication they are prescribing will have dangerous interactions with a patient's current medications or known allergies. This is a critical safety feature to prevent adverse drug events.\r\n\r\n## User Story\r\nAs a clinician, I want to be automatically alerted to potential drug-drug or drug-allergy interactions when I prescribe a new medication, so that I can ensure patient safety and avoid harmful complications.\r\n\r\n## Acceptance Criteria\r\n- [ ] The system checks for interactions against the patient's active medication list.\r\n- [ ] The system checks for interactions against the patient's documented allergies.\r\n- [ ] Alerts must be categorized by severity (Critical, Warning, Minor).\r\n- [ ] The system must account for patient age and sex in interaction logic.\r\n- [ ] If no interactions are found, a clear \"No interactions found\" message is displayed.\r\n- [ ] A loading state is shown while the safety check is in progress.\r\n- [ ] If the check fails (e.g., service unavailable), a clear error message is shown to the clinician.\r\n\r\n## Domain Context\r\n- Critical interactions are life-threatening and must be high-visibility.\r\n- The clinician's existing workflow should be interrupted as little as possible unless a Critical or Warning interaction is found.\r\n\r\n## Out of Scope\r\n- Manually adding medications to the patient's record from this screen.\r\n- Finalizing the prescription order (this component only does the check).\r\n\r\n## Technical Notes\r\n- The UI should be responsive and provide immediate visual feedback.\r\n- Error states must be handled gracefully so the clinician can still proceed if they choose to override (standard medical bypass).",
+    "created_at": "2026-04-12T00:46:00Z",
+    "updated_at": "2026-04-12T00:46:00Z"
+  },
+  "repository": {
+    "id": 2000001,
+    "name": "i-assignment",
+    "full_name": "angelatyk/i-assignment",
+    "owner": {
+      "login": "angelatyk",
+      "id": 101
+    }
+  },
+  "sender": {
+    "login": "business-analyst-user",
+    "id": 501
+  }
+}
