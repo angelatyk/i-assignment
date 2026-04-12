@@ -59,6 +59,14 @@ async function runTest(mockFileName: string): Promise<void> {
   }
 }
 
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
 async function main(): Promise<void> {
   try {
     const mocksDir = path.join(__dirname, "../mocks");
@@ -66,8 +74,12 @@ async function main(): Promise<void> {
 
     console.log(`Found ${files.length} mock issues to test.`);
 
-    for (const file of files) {
-      await runTest(file);
+    const fileChunks = chunkArray(files, 3); // Process 3 mock tests concurrently
+
+    for (let i = 0; i < fileChunks.length; i++) {
+        const chunk = fileChunks[i];
+        console.log(`\n--- Processing Chunk ${i + 1} of ${fileChunks.length} ---`);
+        await Promise.all(chunk.map((file) => runTest(file)));
     }
   } catch (error) {
     console.error("\nTest execution failed:", error);
