@@ -1,0 +1,39 @@
+{
+  "action": "opened",
+  "issue": {
+    "url": "https://api.github.com/repos/angelatyk/i-assignment/issues/104",
+    "repository_url": "https://api.github.com/repos/angelatyk/i-assignment",
+    "html_url": "https://github.com/angelatyk/i-assignment/issues/104",
+    "id": 1000004,
+    "number": 104,
+    "title": "Patient Lab Results Panel",
+    "user": {
+      "login": "senior-engineer-user",
+      "id": 504,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "name": "feature",
+        "color": "a2eeef"
+      }
+    ],
+    "state": "open",
+    "body": "## Summary\nWe need a comprehensive panel that queries, displays, and allows filtering of a patient's lab results within the main charting view. This is a multi-step feature that requires data fetching, tabular rendering, and interactive filtering.\n\n## User Story\nAs a clinician, I want to view a sortable table of all lab findings for a selected patient so that I can track their diagnostic history and make informed decisions.\n\n## Acceptance Criteria\n- [ ] The component must query `DiagnosticReport` resources from the FHIR backend for the active patient.\n- [ ] Results must be displayed in a table showing the date, test code, status, and performer.\n- [ ] The table must show an empty state if no results exist.\n- [ ] A loading spinner must be displayed while the query is in flight.\n- [ ] The user must be able to change the viewed patient using a ReferenceInput search field, which triggers a re-fetch of the table.\n- [ ] Any errors from the FHIR query must be displayed to the user cleanly.\n\n## Technical Notes\n- Use Medplum React components wherever possible (e.g., `ResourceTable`, `ReferenceInput`).\n- The component must be built defensively assuming the FHIR server may have delays.",
+    "created_at": "2026-04-12T09:15:00Z",
+    "updated_at": "2026-04-12T09:15:00Z"
+  },
+  "repository": {
+    "id": 2000001,
+    "name": "i-assignment",
+    "full_name": "angelatyk/i-assignment",
+    "owner": {
+      "login": "angelatyk",
+      "id": 101
+    }
+  },
+  "sender": {
+    "login": "senior-engineer-user",
+    "id": 504
+  }
+}

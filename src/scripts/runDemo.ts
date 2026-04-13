@@ -20,6 +20,7 @@ const DEMO_FILES = [
   'src/mocks/webhooks/vague-feature.json', 
   'src/mocks/webhooks/ba-drug-interaction.json',
   'src/mocks/webhooks/tech-lead-drug-interaction.json',
+  'src/mocks/webhooks/complex-multi-task.json',
 ];
 
 async function runDemo() {
