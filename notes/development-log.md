@@ -61,3 +61,8 @@
 - added a test suite to verify the graph's behavior
 
 - rough estimation of time used: 10 minutes
+
+## Wrapping up rough 3-4 hours session
+
+- added README.md
+- added pusedocode for remaining agents
