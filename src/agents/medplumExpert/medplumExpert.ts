@@ -50,7 +50,7 @@ const MAX_SNIPPET_LINES = 80;
 
 const SourceFilterSchema = z.object({
   selectedIds: z.array(z.string()).describe(
-    'Array of source entry IDs to include (e.g. ["react/ResourceForm", "react-hooks/useMedplum"])'
+    'Array of source entry IDs to include (e.g. ["react/ReferenceInput", "react-hooks/useMedplum"])'
   ),
 });
 
@@ -128,6 +128,68 @@ function readSourceSnippet(filePath: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Package-prefix autocorrection
+// ---------------------------------------------------------------------------
+
+/**
+ * Result of attempting to autocorrect a missing ID.
+ */
+interface CorrectionResult {
+  /** IDs that were wrong-package-prefixed and successfully corrected. */
+  corrected: SourceIndexEntry[];
+  /** IDs that do not exist in the index under any package — true hallucinations. */
+  trulyMissing: string[];
+}
+
+/**
+ * Attempt to recover from wrong-package-prefix errors.
+ *
+ * The LLM sometimes returns a correct export name with the wrong package prefix
+ * (e.g. "core/convertIsoToLocal" when the real ID is "react/convertIsoToLocal").
+ * This function looks up each missing ID by its export name fragment and, if
+ * exactly one match exists in the index, treats it as a recoverable correction.
+ *
+ * If multiple entries share the same export name (ambiguous) or none exist
+ * (true hallucination), the ID is placed in trulyMissing instead.
+ */
+function attemptPrefixCorrection(
+  missingIds: string[],
+  sourceIndex: SourceIndexEntry[],
+): CorrectionResult {
+  const corrected: SourceIndexEntry[] = [];
+  const trulyMissing: string[] = [];
+
+  for (const id of missingIds) {
+    const exportName = id.split('/')[1];
+    if (!exportName) {
+      trulyMissing.push(id);
+      continue;
+    }
+
+    const matches = sourceIndex.filter((e) => e.exportName === exportName);
+
+    if (matches.length === 1) {
+      console.warn(
+        `[MedplumExpert] Auto-corrected wrong package prefix: ${id} → ${matches[0].id}`,
+      );
+      corrected.push(matches[0]);
+    } else if (matches.length > 1) {
+      // Ambiguous — multiple packages export the same name. Don't guess.
+      console.warn(
+        `[MedplumExpert] Ambiguous export name "${exportName}" found in ${matches.length} packages ` +
+        `(${matches.map((m) => m.id).join(', ')}). Dropping ID: ${id}`,
+      );
+      trulyMissing.push(id);
+    } else {
+      // No match at all — genuine hallucination.
+      trulyMissing.push(id);
+    }
+  }
+
+  return { corrected, trulyMissing };
+}
+
+// ---------------------------------------------------------------------------
 // Agent
 // ---------------------------------------------------------------------------
 
@@ -183,7 +245,13 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
   // ------------------------------------------------------------------
   console.log('[MedplumExpert] Pass 1: filtering source entries...');
 
-  const sourceIndexSummary = sourceIndex
+  // Exclude type-only entries before sending to LLM — types cannot be
+  // imported as runtime values and are useless to the Code Generator.
+  // This is a hard filter so the model physically cannot select them,
+  // regardless of what the prompt says.
+  const runtimeSourceIndex = sourceIndex.filter((e) => e.category !== 'type');
+
+  const sourceIndexSummary = runtimeSourceIndex
     .map((e) => `${e.id} [${e.category}] — ${e.description} | tags: ${e.tags.join(', ')}`)
     .join('\n');
 
@@ -210,12 +278,31 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     };
   }
 
-  const selectedSourceEntries = sourceIndex.filter((e) => selectedIds.includes(e.id));
+  // Direct matches from the index
+  const directlySelectedEntries = sourceIndex.filter((e) => selectedIds.includes(e.id));
 
-  // Warn about IDs that were returned by the LLM but don't exist in the index
-  const missingIds = selectedIds.filter((id) => !sourceIndex.some((e) => e.id === id));
-  if (missingIds.length > 0) {
-    console.warn(`[MedplumExpert] LLM returned ${missingIds.length} unrecognized IDs: ${missingIds.join(', ')}`);
+  // IDs returned by the LLM that don't match any index entry
+  const rawMissingIds = selectedIds.filter((id) => !sourceIndex.some((e) => e.id === id));
+
+  // Attempt to recover wrong-package-prefix errors before treating as hallucinations
+  const { corrected: correctedEntries, trulyMissing } = rawMissingIds.length > 0
+    ? attemptPrefixCorrection(rawMissingIds, sourceIndex)
+    : { corrected: [], trulyMissing: [] };
+
+  if (trulyMissing.length > 0) {
+    console.warn(
+      `[MedplumExpert] ${trulyMissing.length} unrecognized IDs dropped (not in index): ${trulyMissing.join(', ')}`,
+    );
+  }
+
+  // Final set: direct matches + autocorrected entries (deduped by id)
+  const seenIds = new Set(directlySelectedEntries.map((e) => e.id));
+  const selectedSourceEntries: SourceIndexEntry[] = [...directlySelectedEntries];
+  for (const entry of correctedEntries) {
+    if (!seenIds.has(entry.id)) {
+      selectedSourceEntries.push(entry);
+      seenIds.add(entry.id);
+    }
   }
 
   // Read source snippets for selected entries
@@ -274,7 +361,10 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     `SUBTASKS:\n${taskSummary}`,
     `SELECTED SOURCE ENTRIES:\n${selectedSourceEntries.map((e) => `- ${e.id}: ${e.description}`).join('\n')}`,
     `SELECTED FHIR SCHEMAS:\n${Object.keys(selectedFhirSchemas).join(', ')}`,
-  ].join('\n\n');
+    trulyMissing.length > 0
+      ? `NOTE: The following IDs were requested but do not exist in the index and must NOT be used: ${trulyMissing.join(', ')}`
+      : '',
+  ].filter(Boolean).join('\n\n');
 
   const summaryLlm = llm.withStructuredOutput(SummarySchema);
 
@@ -312,9 +402,13 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     summary,
   };
 
+  const correctionNote = correctedEntries.length > 0
+    ? ` (${correctedEntries.length} prefix-corrected)`
+    : '';
+
   const logEntry = buildLog(
     'MedplumExpert',
-    `Selected ${selectedSourceEntries.length} source entries and ` +
+    `Selected ${selectedSourceEntries.length} source entries${correctionNote} and ` +
     `${Object.keys(selectedFhirSchemas).length} FHIR schemas. ` +
     `Summary: ${summary.slice(0, 120)}...`,
     'success',
@@ -327,5 +421,3 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     logs: [...state.logs, logEntry],
   };
 }
-
-
