@@ -28,7 +28,7 @@ dotenv.config();
 // ---------------------------------------------------------------------------
 
 const MEDPLUM_REPO_PATH = process.env.MEDPLUM_REPO_PATH ?? './medplum';
-const OUTPUT_DIR = path.resolve('./src/medplum/context');
+const OUTPUT_DIR = path.resolve('./context/medplum/indexes');
 const SOURCE_INDEX_PATH = path.join(OUTPUT_DIR, 'medplum-source-index.json');
 const FHIR_INDEX_PATH = path.join(OUTPUT_DIR, 'medplum-fhir-schemas.json');
 const META_PATH = path.join(OUTPUT_DIR, 'medplum-index-meta.json');
