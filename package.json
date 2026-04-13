@@ -1,0 +1,37 @@
+{
+  "name": "ai-engineering-harness",
+  "version": "1.0.0",
+  "description": "An AI engineering harness for automated SDLC.",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:analyzer": "tsx src/scripts/runIssueAnalyzer.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "build:index": "tsx src/scripts/buildMedplumIndex.ts",
+    "build:index:source": "tsx src/scripts/buildMedplumIndex.ts --source",
+    "build:index:fhir": "tsx src/scripts/buildMedplumIndex.ts --fhir",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^0.3.0",
+    "@langchain/core": "^0.3.0",
+    "@langchain/google-genai": "^0.1.0",
+    "@langchain/langgraph": "^0.2.0",
+    "dotenv": "^16.4.5",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.1",
+    "@typescript-eslint/parser": "^8.58.1",
+    "@vitest/coverage-v8": "^4.1.4",
+    "eslint": "^9.39.4",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.58.1",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "action": "opened",
+  "issue": {
+    "url": "https://api.github.com/repos/angelatyk/i-assignment/issues/201",
+    "repository_url": "https://api.github.com/repos/angelatyk/i-assignment",
+    "html_url": "https://github.com/angelatyk/i-assignment/issues/201",
+    "id": 1000201,
+    "number": 201,
+    "title": "Improve the Patient Dashboard",
+    "user": {
+      "login": "product-manager-user",
+      "id": 601,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "name": "enhancement",
+        "color": "84b6eb"
+      }
+    ],
+    "state": "open",
+    "body": "## Summary\r\nClinicians have been complaining that the patient dashboard feels cluttered and it's hard to find what they need quickly. We need to make it better and more intuitive.\r\n\r\n## User Story\r\nAs a clinician, I want a cleaner and more organized patient dashboard so that I can find the information I need faster.\r\n\r\n## Notes\r\n- Look at what competitor EHR products are doing for inspiration.\r\n- It should feel modern and not overwhelming.\r\n- Prioritize the most important clinical information.\r\n- The design team will provide mockups at some point.",
+    "created_at": "2026-04-12T01:00:00Z",
+    "updated_at": "2026-04-12T01:00:00Z"
+  },
+  "repository": {
+    "id": 2000001,
+    "name": "i-assignment",
+    "full_name": "angelatyk/i-assignment",
+    "owner": {
+      "login": "angelatyk",
+      "id": 101
+    }
+  },
+  "sender": {
+    "login": "product-manager-user",
+    "id": 601
+  }
+}

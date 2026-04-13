@@ -1,0 +1,43 @@
+{
+  "action": "opened",
+  "issue": {
+    "url": "https://api.github.com/repos/angelatyk/i-assignment/issues/205",
+    "repository_url": "https://api.github.com/repos/angelatyk/i-assignment",
+    "html_url": "https://github.com/angelatyk/i-assignment/issues/205",
+    "id": 1000205,
+    "number": 205,
+    "title": "Autosave for Clinical Encounter Notes",
+    "user": {
+      "login": "business-analyst-user",
+      "id": 501,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "name": "feature",
+        "color": "a2eeef"
+      },
+      {
+        "name": "high-priority",
+        "color": "d73a4a"
+      }
+    ],
+    "state": "open",
+    "body": "## Summary\r\nClinicians are losing encounter notes when they navigate away or their session times out before manually saving. We need to automatically save notes as the clinician types so that no work is lost.\r\n\r\n## User Story\r\nAs a clinician, I want my encounter notes to be automatically saved as I type so that I never lose progress due to navigation or session expiry.\r\n\r\n## Acceptance Criteria\r\n- [ ] Notes are automatically saved periodically while the clinician is actively typing.\r\n- [ ] A status indicator is always visible showing one of three states: \"Saving...\", \"Saved\", or \"Save failed\".\r\n- [ ] The \"Saving...\" state is shown immediately when a save is triggered.\r\n- [ ] The \"Saved\" state is shown once the save is confirmed by the backend.\r\n- [ ] The \"Save failed\" state is shown if the backend returns an error, with a manual retry option.\r\n- [ ] Autosave does not trigger if the note content has not changed since the last save.\r\n- [ ] When the clinician manually clicks Save, it overrides the autosave timer and saves immediately.\r\n\r\n## Out of Scope\r\n- Version history or the ability to revert to a previous draft.\r\n- Collaborative editing (multiple clinicians editing the same note simultaneously).\r\n\r\n## Technical Notes\r\n- The save frequency and debounce behavior should be determined by the engineering team based on backend performance characteristics.\r\n- Notes should be persisted to the appropriate FHIR resource — the Medplum expert should confirm the correct resource and update pattern.",
+    "created_at": "2026-04-12T01:40:00Z",
+    "updated_at": "2026-04-12T01:40:00Z"
+  },
+  "repository": {
+    "id": 2000001,
+    "name": "i-assignment",
+    "full_name": "angelatyk/i-assignment",
+    "owner": {
+      "login": "angelatyk",
+      "id": 101
+    }
+  },
+  "sender": {
+    "login": "business-analyst-user",
+    "id": 501
+  }
+}

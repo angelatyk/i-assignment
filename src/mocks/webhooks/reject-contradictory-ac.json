@@ -1,0 +1,39 @@
+{
+  "action": "opened",
+  "issue": {
+    "url": "https://api.github.com/repos/angelatyk/i-assignment/issues/203",
+    "repository_url": "https://api.github.com/repos/angelatyk/i-assignment",
+    "html_url": "https://github.com/angelatyk/i-assignment/issues/203",
+    "id": 1000203,
+    "number": 203,
+    "title": "Patient Encounter History Panel",
+    "user": {
+      "login": "product-manager-user",
+      "id": 601,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "name": "feature",
+        "color": "a2eeef"
+      }
+    ],
+    "state": "open",
+    "body": "## Summary\r\nClinicians need to be able to review a patient's encounter history from within the patient chart. The panel should give them a complete picture of the patient's care.\r\n\r\n## User Story\r\nAs a clinician, I want to see a patient's encounter history so that I can understand their care journey before making decisions.\r\n\r\n## Acceptance Criteria\r\n- [ ] The panel displays the patient's complete encounter history across all providers and care settings.\r\n- [ ] Only encounters where the currently logged-in clinician was the primary or attending provider are shown.\r\n- [ ] Encounters are sorted with the most recent first.\r\n- [ ] Each encounter displays: date, type, primary provider, and chief complaint.\r\n- [ ] A loading state is shown while data is fetched.\r\n- [ ] An empty state is shown if no encounters exist.\r\n\r\n## Technical Notes\r\n- Source data from the patient's `Encounter` FHIR resources.",
+    "created_at": "2026-04-12T01:20:00Z",
+    "updated_at": "2026-04-12T01:20:00Z"
+  },
+  "repository": {
+    "id": 2000001,
+    "name": "i-assignment",
+    "full_name": "angelatyk/i-assignment",
+    "owner": {
+      "login": "angelatyk/i-assignment",
+      "id": 101
+    }
+  },
+  "sender": {
+    "login": "product-manager-user",
+    "id": 601
+  }
+}

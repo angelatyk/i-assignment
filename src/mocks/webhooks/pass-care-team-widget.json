@@ -1,0 +1,43 @@
+{
+  "action": "opened",
+  "issue": {
+    "url": "https://api.github.com/repos/angelatyk/i-assignment/issues/204",
+    "repository_url": "https://api.github.com/repos/angelatyk/i-assignment",
+    "html_url": "https://github.com/angelatyk/i-assignment/issues/204",
+    "id": 1000204,
+    "number": 204,
+    "title": "Patient Care Team Display Widget",
+    "user": {
+      "login": "tech-lead-user",
+      "id": 502,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "name": "feature",
+        "color": "a2eeef"
+      },
+      {
+        "name": "medplum-integration",
+        "color": "fbca04"
+      }
+    ],
+    "state": "open",
+    "body": "## Summary\r\nClinicians need to quickly identify who else is involved in a patient's care without navigating away from the chart. A care team widget on the patient chart will surface this information at a glance.\r\n\r\n## User Story\r\nAs a clinician, I want to see who is on a patient's care team so that I can coordinate care and know who to contact.\r\n\r\n## Acceptance Criteria\r\n- [ ] The widget displays all active members of the patient's care team.\r\n- [ ] Each member entry shows: full name, role/specialty, and a contact method (phone or email if available).\r\n- [ ] If a contact method is not available for a member, that field is omitted gracefully (no broken UI).\r\n- [ ] A loading skeleton is shown while care team data is being fetched.\r\n- [ ] If the patient has no care team members, a clear \"No care team assigned\" message is displayed.\r\n- [ ] If the data fetch fails, an error message is shown with an option to retry.\r\n- [ ] The widget is read-only; no editing of care team members is in scope.\r\n\r\n## Out of Scope\r\n- Adding or removing care team members from this widget.\r\n- Messaging or calling team members directly from the widget.\r\n\r\n## Technical Notes\r\n- Care team data should come from the relevant FHIR resources in the Medplum backend — the Medplum expert should determine the appropriate resource type(s) and access pattern.\r\n- The widget must be compatible with `@medplum/react` theming.",
+    "created_at": "2026-04-12T01:30:00Z",
+    "updated_at": "2026-04-12T01:30:00Z"
+  },
+  "repository": {
+    "id": 2000001,
+    "name": "i-assignment",
+    "full_name": "angelatyk/i-assignment",
+    "owner": {
+      "login": "angelatyk",
+      "id": 101
+    }
+  },
+  "sender": {
+    "login": "tech-lead-user",
+    "id": 502
+  }
+}
