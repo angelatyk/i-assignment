@@ -216,9 +216,216 @@ export const MEDPLUM_EXPERT_STATE: HarnessState = {
 };
 
 /**
- * Minimal Medplum source index entries shared across MedplumExpert tests.
+ * Fixture for a clinical note / encounter workflow.
+ */
+export const MEDPLUM_EXPERT_STATE_ENCOUNTER: HarnessState = {
+  issue: {
+    number: 2,
+    title: 'Autosave for Clinical Encounter Notes',
+    body: 'Clinicians are losing encounter notes when they navigate away or their session times out.',
+    labels: ['feature'],
+  },
+  subtasks: [
+    {
+      title: 'Implement autosaving Encounter note form',
+      description: 'A rich text form that debounces and autosaves DocumentReference and Encounter resources.',
+      acceptanceCriteria: ['Saves Encounter without breaking session', 'Status indicator works'],
+      dependencies: [],
+    },
+  ],
+  status: 'running',
+  logs: [],
+};
+
+/**
+ * Fixture for a specialized hook/search workflow without forms.
+ */
+export const MEDPLUM_EXPERT_STATE_SEARCH: HarnessState = {
+  issue: {
+    number: 3,
+    title: 'Patient Care Team Display Widget',
+    body: "Clinicians need to quickly identify who else is involved in a patient's care.",
+    labels: ['feature'],
+  },
+  subtasks: [
+    {
+      title: 'Build CareTeam query hook',
+      description: 'Query Medplum for all active CareTeam resources related to a given Patient.',
+      acceptanceCriteria: ['Returns array of members', 'Handles pagination if large list'],
+      dependencies: [],
+    },
+  ],
+  status: 'running',
+  logs: [],
+};
+
+/**
+ * Fixture with a vague task that shouldn't match any obvious specific form logic
+ * to see how the LLM handles ambiguity.
+ */
+export const MEDPLUM_EXPERT_STATE_VAGUE: HarnessState = {
+  issue: {
+    number: 4,
+    title: 'Improve Dashboard Aesthetics',
+    body: 'Make the patient dashboard look nicer with more white space.',
+    labels: ['enhancement'],
+  },
+  subtasks: [
+    {
+      title: 'Update generic UI container',
+      description: 'Refactor the layout wrapper to add CSS padding.',
+      acceptanceCriteria: ['Looks nicer'],
+      dependencies: [],
+    },
+  ],
+  status: 'running',
+  logs: [],
+};
+
+/**
+ * Fixture for a task with zero Medplum relevance.
+ *
+ * Purpose: verifies the agent returns empty source entries and schemas rather
+ * than hallucinating Medplum hooks for a purely generic front-end task.
+ * The expected result is 0 source entries, 0 FHIR schemas.
+ */
+export const MEDPLUM_EXPERT_STATE_OUT_OF_DOMAIN: HarnessState = {
+  issue: {
+    number: 5,
+    title: 'Add Redux store for theme management',
+    body: 'The app needs a global Redux slice to manage light/dark mode preferences.',
+    labels: ['enhancement'],
+  },
+  subtasks: [
+    {
+      title: 'Create theme Redux slice',
+      description:
+        'Add a Redux Toolkit slice that stores the current theme (light | dark) in global state. ' +
+        'Expose a toggleTheme action. No FHIR data is involved.',
+      acceptanceCriteria: [
+        'Slice is registered in the root Redux store',
+        'toggleTheme action flips state correctly',
+        'No Medplum hooks are used',
+      ],
+      dependencies: [],
+    },
+  ],
+  status: 'running',
+  logs: [],
+};
+
+/**
+ * Fixture that specifically exercises the ResourceForm component path.
+ *
+ * Purpose: `react/ResourceForm` was returned as an unrecognized ID in two of the
+ * original integration runs and was silently dropped. This fixture targets a task
+ * where ResourceForm is the natural answer, so we can assert on whether it is
+ * correctly resolved or consistently flagged as unrecognized.
+ */
+export const MEDPLUM_EXPERT_STATE_RESOURCE_FORM: HarnessState = {
+  issue: {
+    number: 6,
+    title: 'Generic FHIR Resource Editor',
+    body: 'Allow admin users to edit any FHIR resource directly via a schema-driven form.',
+    labels: ['feature', 'admin'],
+  },
+  subtasks: [
+    {
+      title: 'Build schema-driven resource edit form',
+      description:
+        'Render a ResourceForm for an arbitrary FHIR resource type passed in as a prop. ' +
+        'The form should use the Medplum ResourceForm component and submit via useMedplum.',
+      acceptanceCriteria: [
+        'Form renders fields derived from the FHIR schema',
+        'Submit calls medplum.updateResource',
+        'Validation errors are displayed inline',
+      ],
+      dependencies: [],
+    },
+  ],
+  status: 'running',
+  logs: [],
+};
+
+/**
+ * Fixture with multiple subtasks covering different Medplum surface areas.
+ *
+ * Purpose: all previous fixtures have exactly one subtask. This fixture checks
+ * that the agent correctly aggregates context across several tasks in a single
+ * pass rather than only processing the first subtask.
+ *
+ * Expected: source entries should span hooks (useMedplum, useSearchResources),
+ * display components (ResourceTable), and input components (ReferenceInput).
+ * FHIR schemas should include at least Patient, Observation, and DiagnosticReport.
+ */
+export const MEDPLUM_EXPERT_STATE_MULTI_SUBTASK: HarnessState = {
+  issue: {
+    number: 7,
+    title: 'Patient Lab Results Panel',
+    body: 'A panel that queries, displays, and allows filtering of a patient\'s lab results.',
+    labels: ['feature'],
+  },
+  subtasks: [
+    {
+      title: 'Query DiagnosticReport resources',
+      description:
+        'Fetch all DiagnosticReport resources for a given Patient from Medplum, ' +
+        'sorted by date descending. Handle loading and error states.',
+      acceptanceCriteria: ['Returns sorted list', 'Loading spinner shown during fetch'],
+      dependencies: [],
+    },
+    {
+      title: 'Render results in a resource table',
+      description:
+        'Display the fetched DiagnosticReport resources using a Medplum ResourceTable component. ' +
+        'Columns: date, code, status, performer.',
+      acceptanceCriteria: ['Table renders all columns', 'Empty state shown when no results'],
+      dependencies: ['Query DiagnosticReport resources'],
+    },
+    {
+      title: 'Add patient filter input',
+      description:
+        'Allow the user to switch the viewed patient by selecting from a ReferenceInput ' +
+        'scoped to Patient resources.',
+      acceptanceCriteria: ['Selecting a new patient re-fetches results', 'Input is searchable'],
+      dependencies: [],
+    },
+  ],
+  status: 'running',
+  logs: [],
+};
+
+/**
+ * Export all fixtures together for the integration runner.
+ *
+ * ORDER MATTERS for log readability:
+ *   1–4  original fixtures (regression baseline)
+ *   5    out-of-domain (expect zero selections)
+ *   6    ResourceForm edge case (unrecognized ID regression)
+ *   7    multi-subtask (aggregation correctness)
+ */
+export const MEDPLUM_EXPERT_FIXTURES = [
+  MEDPLUM_EXPERT_STATE,
+  MEDPLUM_EXPERT_STATE_ENCOUNTER,
+  MEDPLUM_EXPERT_STATE_SEARCH,
+  MEDPLUM_EXPERT_STATE_VAGUE,
+  MEDPLUM_EXPERT_STATE_OUT_OF_DOMAIN,
+  MEDPLUM_EXPERT_STATE_RESOURCE_FORM,
+  MEDPLUM_EXPERT_STATE_MULTI_SUBTASK,
+];
+
+// ---------------------------------------------------------------------------
+// Shared mock indexes for unit tests
+// ---------------------------------------------------------------------------
+
+/**
+ * Expanded source index covering hooks, display components, and input components.
+ *
+ * Previously only contained hooks. The additions ensure unit tests that assert
+ * on component-type selection are not trivially satisfied by an empty pool.
  */
 export const MOCK_SOURCE_INDEX: SourceIndexEntry[] = [
+  // --- Forms & CRUD ---
   {
     id: 'react/ResourceForm',
     package: 'react',
@@ -229,6 +436,7 @@ export const MOCK_SOURCE_INDEX: SourceIndexEntry[] = [
     importPath: '@medplum/react',
     tags: ['form', 'resource', 'CRUD'],
   },
+  // --- Hooks ---
   {
     id: 'react-hooks/useMedplum',
     package: 'react-hooks',
@@ -239,10 +447,107 @@ export const MOCK_SOURCE_INDEX: SourceIndexEntry[] = [
     importPath: '@medplum/react-hooks',
     tags: ['client', 'auth', 'data'],
   },
+  {
+    id: 'react-hooks/useMedplumContext',
+    package: 'react-hooks',
+    filePath: 'packages/react-hooks/src/useMedplumContext.ts',
+    exportName: 'useMedplumContext',
+    category: 'hook',
+    description: 'Returns the full Medplum context including profile and auth state.',
+    importPath: '@medplum/react-hooks',
+    tags: ['context', 'auth', 'profile'],
+  },
+  {
+    id: 'react-hooks/useMedplumProfile',
+    package: 'react-hooks',
+    filePath: 'packages/react-hooks/src/useMedplumProfile.ts',
+    exportName: 'useMedplumProfile',
+    category: 'hook',
+    description: 'Returns the current user profile resource (Practitioner, Patient, etc.).',
+    importPath: '@medplum/react-hooks',
+    tags: ['profile', 'auth', 'user'],
+  },
+  {
+    id: 'react-hooks/useSearchResources',
+    package: 'react-hooks',
+    filePath: 'packages/react-hooks/src/useSearchResources.ts',
+    exportName: 'useSearchResources',
+    category: 'hook',
+    description: 'Reactive hook that searches for FHIR resources and returns a flat array.',
+    importPath: '@medplum/react-hooks',
+    tags: ['search', 'query', 'list'],
+  },
+  // --- Display components ---
+  {
+    id: 'react/ResourceTable',
+    package: 'react',
+    filePath: 'packages/react/src/ResourceTable/ResourceTable.tsx',
+    exportName: 'ResourceTable',
+    category: 'component',
+    description: 'Renders a paginated table of FHIR resources with configurable columns.',
+    importPath: '@medplum/react',
+    tags: ['table', 'list', 'display', 'pagination'],
+  },
+  {
+    id: 'react/Timeline',
+    package: 'react',
+    filePath: 'packages/react/src/Timeline/Timeline.tsx',
+    exportName: 'Timeline',
+    category: 'component',
+    description: 'Displays a chronological list of FHIR resources as a timeline.',
+    importPath: '@medplum/react',
+    tags: ['timeline', 'history', 'display'],
+  },
+  // --- Input components ---
+  {
+    id: 'react/ReferenceInput',
+    package: 'react',
+    filePath: 'packages/react/src/ReferenceInput/ReferenceInput.tsx',
+    exportName: 'ReferenceInput',
+    category: 'component',
+    description: 'Search-as-you-type input for selecting a FHIR Reference.',
+    importPath: '@medplum/react',
+    tags: ['input', 'reference', 'search', 'select'],
+  },
+  {
+    id: 'react/CalendarInput',
+    package: 'react',
+    filePath: 'packages/react/src/CalendarInput/CalendarInput.tsx',
+    exportName: 'CalendarInput',
+    category: 'component',
+    description: 'Calendar date picker for selecting appointment or event dates.',
+    importPath: '@medplum/react',
+    tags: ['input', 'date', 'calendar', 'appointment'],
+  },
+  {
+    id: 'react/DateTimeInput',
+    package: 'react',
+    filePath: 'packages/react/src/DateTimeInput/DateTimeInput.tsx',
+    exportName: 'DateTimeInput',
+    category: 'component',
+    description: 'Combined date and time picker for FHIR dateTime fields.',
+    importPath: '@medplum/react',
+    tags: ['input', 'date', 'time', 'datetime'],
+  },
+  // --- Layout ---
+  {
+    id: 'react/Container',
+    package: 'react',
+    filePath: 'packages/react/src/Container/Container.tsx',
+    exportName: 'Container',
+    category: 'component',
+    description: 'Centers and constrains content width. Use for top-level page layout.',
+    importPath: '@medplum/react',
+    tags: ['layout', 'container', 'wrapper'],
+  },
 ];
 
 /**
- * Minimal FHIR schema index shared across MedplumExpert tests.
+ * Expanded FHIR schema index covering a wider set of resource types.
+ *
+ * Previously only contained Patient and Appointment. The additions ensure unit
+ * tests for search, encounter, and lab-result workflows have realistic schemas
+ * available to assert against.
  */
 export const MOCK_FHIR_INDEX: FhirSchemaIndex = {
   fetchedAt: '2026-01-01T00:00:00Z',
@@ -267,6 +572,65 @@ export const MOCK_FHIR_INDEX: FhirSchemaIndex = {
         start: { description: 'Start time', type: 'string' },
       },
       required: ['status', 'participant'],
+    },
+    Encounter: {
+      name: 'Encounter',
+      description: 'An interaction between a patient and healthcare provider.',
+      properties: {
+        id: { description: 'Logical id', type: 'string' },
+        status: { description: 'Encounter status', enum: ['planned', 'in-progress', 'finished', 'cancelled'] },
+        subject: { description: 'The patient', type: 'Reference' },
+        participant: { description: 'List of participants', type: 'array' },
+      },
+      required: ['status'],
+    },
+    DocumentReference: {
+      name: 'DocumentReference',
+      description: 'A reference to a clinical document.',
+      properties: {
+        id: { description: 'Logical id', type: 'string' },
+        status: { description: 'Document status', enum: ['current', 'superseded', 'entered-in-error'] },
+        content: { description: 'Document content with attachment', type: 'array' },
+        context: { description: 'Clinical context (encounter reference)', type: 'object' },
+        author: { description: 'Who authored the document', type: 'array' },
+      },
+      required: ['status', 'content'],
+    },
+    CareTeam: {
+      name: 'CareTeam',
+      description: 'A group of practitioners and/or organizations caring for a patient.',
+      properties: {
+        id: { description: 'Logical id', type: 'string' },
+        status: { description: 'CareTeam status', enum: ['proposed', 'active', 'suspended', 'inactive'] },
+        subject: { description: 'The patient this care team is for', type: 'Reference' },
+        participant: { description: 'Members of the care team', type: 'array' },
+      },
+      required: ['status'],
+    },
+    DiagnosticReport: {
+      name: 'DiagnosticReport',
+      description: 'The findings and interpretation of diagnostic tests.',
+      properties: {
+        id: { description: 'Logical id', type: 'string' },
+        status: { description: 'Report status', enum: ['registered', 'partial', 'final', 'amended'] },
+        code: { description: 'Name/code for this diagnostic report', type: 'CodeableConcept' },
+        subject: { description: 'The patient', type: 'Reference' },
+        effectiveDateTime: { description: 'Clinically relevant time of report', type: 'string' },
+        performer: { description: 'Responsible party', type: 'array' },
+      },
+      required: ['status', 'code'],
+    },
+    Observation: {
+      name: 'Observation',
+      description: 'Measurements and simple assertions about a patient.',
+      properties: {
+        id: { description: 'Logical id', type: 'string' },
+        status: { description: 'Observation status', enum: ['registered', 'preliminary', 'final', 'amended'] },
+        code: { description: 'Type of observation', type: 'CodeableConcept' },
+        subject: { description: 'Who the observation is about', type: 'Reference' },
+        valueQuantity: { description: 'Numeric result value with units', type: 'object' },
+      },
+      required: ['status', 'code'],
     },
   },
 };
