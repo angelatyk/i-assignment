@@ -10,6 +10,7 @@
     "test:integration:analyzer": "tsx src/scripts/runIssueAnalyzer.ts",
     "test:integration:medplum": "tsx src/scripts/runMedplumExpert.ts",
     "test:e2e": "tsx src/scripts/runHarnessE2E.ts",
+    "demo": "tsx src/scripts/runDemo.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "build:index": "tsx src/scripts/buildMedplumIndex.ts",
