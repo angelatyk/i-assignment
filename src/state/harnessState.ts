@@ -34,6 +34,35 @@ export interface LogEntry {
 }
 
 /**
+ * MedplumSourceEntry is the minimal representation of a Medplum SDK symbol
+ * that the Code Generator needs. Internal index details stay in medplumExpert.types.ts.
+ */
+export interface MedplumSourceEntry {
+  id: string;
+  exportName: string;
+  importPath: string;
+  category: string;
+  description: string;
+  tags: string[];
+}
+
+/**
+ * MedplumContextDocument is the output of the Medplum Expert agent.
+ * This is the only Medplum-specific type that crosses the agent boundary —
+ * it is the interface between MedplumExpert and the Code Generator.
+ */
+export interface MedplumContextDocument {
+  /** Medplum SDK symbols (components, hooks, utilities) selected for this feature */
+  selectedSourceEntries: MedplumSourceEntry[];
+  /** Source code snippets keyed by entry id, for direct use by the Code Generator */
+  fullSourceSnippets: Record<string, string>;
+  /** FHIR resource schemas keyed by resource name (e.g. "Patient", "Appointment") */
+  selectedFhirSchemas: Record<string, unknown>;
+  /** Narrative briefing for the Code Generator summarising what to use and why */
+  summary: string;
+}
+
+/**
  * HarnessState is the central state object used by LangGraph nodes.
  */
 export interface HarnessState {
@@ -41,5 +70,6 @@ export interface HarnessState {
   subtasks: Subtask[];
   status: PipelineStatus;
   rejectionReason?: string;
+  medplumContext?: MedplumContextDocument;
   logs: LogEntry[];
 }

@@ -4,9 +4,15 @@
   "description": "An AI engineering harness for automated SDLC.",
   "main": "src/index.ts",
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:analyzer": "tsx src/scripts/testIssueAnalyzer.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "build:index": "tsx src/scripts/buildMedplumIndex.ts",
+    "build:index:source": "tsx src/scripts/buildMedplumIndex.ts --source",
+    "build:index:fhir": "tsx src/scripts/buildMedplumIndex.ts --fhir"
   },
   "dependencies": {
     "@langchain/anthropic": "^0.3.0",
@@ -18,7 +24,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
+    "@vitest/coverage-v8": "^4.1.4",
     "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.4"
   }
 }
