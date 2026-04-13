@@ -1,8 +1,8 @@
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
-import { HarnessState, LogEntry, Subtask } from "../state/harnessState";
-import { getModel } from "../utils/llmFactory";
-import { ISSUE_ANALYZER_SYSTEM_PROMPT } from "../prompts/issueAnalyzerPrompt";
+import { HarnessState, LogEntry, Subtask } from "../../state/harnessState";
+import { getModel } from "../../utils/llmFactory";
+import { ISSUE_ANALYZER_SYSTEM_PROMPT } from "../../prompts/issueAnalyzerPrompt";
 
 /**
  * Structured response schema using Zod for the LLM.

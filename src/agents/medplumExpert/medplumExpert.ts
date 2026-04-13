@@ -17,24 +17,24 @@ import type {
   LogEntry,
   MedplumContextDocument,
   MedplumSourceEntry,
-} from '../state/harnessState';
+} from '../../state/harnessState';
+import { getModel } from '../../utils/llmFactory';
+import {
+  SOURCE_FILTER_SYSTEM_PROMPT,
+  FHIR_FILTER_SYSTEM_PROMPT,
+  CONTEXT_SUMMARY_SYSTEM_PROMPT,
+} from '../../prompts/medplumExpertPrompts';
 import type {
   SourceIndexEntry,
   FhirSchema,
   FhirSchemaIndex,
 } from './medplumExpert.types';
-import { getModel } from '../utils/llmFactory';
-import {
-  SOURCE_FILTER_SYSTEM_PROMPT,
-  FHIR_FILTER_SYSTEM_PROMPT,
-  CONTEXT_SUMMARY_SYSTEM_PROMPT,
-} from '../prompts/medplumExpertPrompts';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const OUTPUT_DIR = path.resolve('./context/medplum/indexes');
+const OUTPUT_DIR = path.resolve('./src/context/medplum/indexes');
 const SOURCE_INDEX_PATH = path.join(OUTPUT_DIR, 'medplum-source-index.json');
 const FHIR_INDEX_PATH = path.join(OUTPUT_DIR, 'medplum-fhir-schemas.json');
 const MEDPLUM_REPO_PATH = process.env.MEDPLUM_REPO_PATH ?? './medplum';
