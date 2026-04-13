@@ -53,3 +53,11 @@
 - added more complete test coverage
 
 - rough estimation of time used: 30 minutes
+
+## LangGraph - Multi-agent orchestration
+
+- created a graph that orchestrates the issue analyzer and medplum expert agents
+- added conditional edges to route between agents based on the issue analyzer's decision
+- added a test suite to verify the graph's behavior
+
+- rough estimation of time used: 10 minutes
