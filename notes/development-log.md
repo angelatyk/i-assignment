@@ -74,3 +74,15 @@
 
 - added README.md
 - added pusedocode for remaining agents
+
+## Medplum Expert Hallucination Discovery
+
+- ran several integration tests for Medplum Expert and discovered inconsistent "ghost" identifiers
+- created a dedicated hallucination/groundedness test suite to pin structural invariants
+- expanded mock fixtures to cover out-of-domain and edge-case (ResourceForm) scenarios
+- model was hallucinating plausible but fake component IDs (e.g. `ResourceForm`) and using incorrect package prefixes (e.g. `core/` instead of `react/`)
+- implemented a self-healing `attemptPrefixCorrection` layer to recover wrong-prefix exports using the real index
+- implemented a post-LLM grounding pass that strips truly missing IDs and injects a "Negative Context" note into the summary pass to prevent verbal leaks
+- discovered model was attempting to import TypeScript types as runtime components; fixed by hard-filtering the 'type' category out of the source index before sending it to the LLM
+
+- rough estimation of time used: 30 minutes
