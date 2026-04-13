@@ -46,3 +46,10 @@
   - batched the script: files are now grouped into batches of 8 using withStructuredOutput to get precise developer-focused descriptions much faster
 
 - rough estimation of time used: 90 minutes
+
+## Manual Code Review
+
+- refactored codebase to use a more modular and maintainable structure
+- added more complete test coverage
+
+- rough estimation of time used: 30 minutes
