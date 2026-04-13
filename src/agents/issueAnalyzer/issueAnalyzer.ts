@@ -1,7 +1,8 @@
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
-import { HarnessState, LogEntry, Subtask } from "../../state/harnessState";
+import { HarnessState, Subtask } from "../../state/harnessState";
 import { getModel } from "../../utils/llmFactory";
+import { buildLog } from "../../utils/buildLog";
 import { ISSUE_ANALYZER_SYSTEM_PROMPT } from "../../prompts/issueAnalyzerPrompt";
 
 /**
@@ -63,24 +64,22 @@ export async function issueAnalyzer(state: HarnessState): Promise<Partial<Harnes
       status: "failed",
       logs: [
         ...state.logs,
-        {
-          timestamp: new Date().toISOString(),
-          agentName: "IssueAnalyzer",
-          decision: "Structured LLM call failed or produced malformed schema",
-          status: "failure",
-        },
+        buildLog(
+          'IssueAnalyzer',
+          'Structured LLM call failed or produced malformed schema',
+          'failure',
+        ),
       ],
     };
   }
 
-  const logEntry: LogEntry = {
-    timestamp: new Date().toISOString(),
-    agentName: "IssueAnalyzer",
-    decision: result.decision === "pass"
+  const logEntry = buildLog(
+    'IssueAnalyzer',
+    result.decision === "pass"
       ? `Passed: ${result.reasoning}`
       : `Rejected: ${result.reasoning}`,
-    status: "success",
-  };
+    'success',
+  );
 
   if (result.decision === "pass") {
     console.log(`[IssueAnalyzer] PASSED — ${(result.subtasks || []).length} subtask(s) generated.`);

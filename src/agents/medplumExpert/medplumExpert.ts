@@ -14,11 +14,11 @@ import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { z } from 'zod';
 import type {
   HarnessState,
-  LogEntry,
   MedplumContextDocument,
   MedplumSourceEntry,
 } from '../../state/harnessState';
 import { getModel } from '../../utils/llmFactory';
+import { buildLog } from '../../utils/buildLog';
 import {
   SOURCE_FILTER_SYSTEM_PROMPT,
   FHIR_FILTER_SYSTEM_PROMPT,
@@ -34,7 +34,9 @@ import type {
 // Constants
 // ---------------------------------------------------------------------------
 
-const OUTPUT_DIR = path.resolve('./src/context/medplum/indexes');
+// Anchor paths to this file's location, not process.cwd(), so the agent
+// works regardless of which directory the process is started from.
+const OUTPUT_DIR = path.resolve(__dirname, '../../context/medplum/indexes');
 const SOURCE_INDEX_PATH = path.join(OUTPUT_DIR, 'medplum-source-index.json');
 const FHIR_INDEX_PATH = path.join(OUTPUT_DIR, 'medplum-fhir-schemas.json');
 const MEDPLUM_REPO_PATH = process.env.MEDPLUM_REPO_PATH ?? './medplum';
@@ -114,9 +116,15 @@ function loadFhirIndex(): FhirSchemaIndex {
  */
 function readSourceSnippet(filePath: string): string {
   const fullPath = path.join(path.resolve(MEDPLUM_REPO_PATH), filePath);
-  if (!fs.existsSync(fullPath)) return '// Source file not found';
-  const lines = fs.readFileSync(fullPath, 'utf-8').split('\n');
-  return lines.slice(0, MAX_SNIPPET_LINES).join('\n');
+  try {
+    const lines = fs.readFileSync(fullPath, 'utf-8').split('\n');
+    return lines.slice(0, MAX_SNIPPET_LINES).join('\n');
+  } catch {
+    // Log a warning but return empty string — the Code Generator will
+    // still receive the entry's description and metadata from the index.
+    console.warn(`[MedplumExpert] Could not read source snippet for: ${filePath}`);
+    return '';
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -154,7 +162,7 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
       status: 'failed',
       logs: [
         ...state.logs,
-        buildLog('Index load failed — run npm run build:index first', 'failure'),
+        buildLog('MedplumExpert', 'Index load failed — run npm run build:index first', 'failure'),
       ],
     };
   }
@@ -197,7 +205,7 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
       status: 'failed',
       logs: [
         ...state.logs,
-        buildLog('Source filter LLM call failed', 'failure'),
+        buildLog('MedplumExpert', 'Source filter LLM call failed', 'failure'),
       ],
     };
   }
@@ -243,7 +251,7 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
       status: 'failed',
       logs: [
         ...state.logs,
-        buildLog('FHIR filter LLM call failed', 'failure'),
+        buildLog('MedplumExpert', 'FHIR filter LLM call failed', 'failure'),
       ],
     };
   }
@@ -304,7 +312,8 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     summary,
   };
 
-  const logEntry: LogEntry = buildLog(
+  const logEntry = buildLog(
+    'MedplumExpert',
     `Selected ${selectedSourceEntries.length} source entries and ` +
     `${Object.keys(selectedFhirSchemas).length} FHIR schemas. ` +
     `Summary: ${summary.slice(0, 120)}...`,
@@ -319,15 +328,4 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
   };
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
-function buildLog(decision: string, status: LogEntry['status']): LogEntry {
-  return {
-    timestamp: new Date().toISOString(),
-    agentName: 'MedplumExpert',
-    decision,
-    status,
-  };
-}

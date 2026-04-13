@@ -1,4 +1,3 @@
-import { HarnessState } from "../../state/harnessState";
 
 /**
  * PATH: src/agents/codeGenerator/codeGenerator.ts
@@ -27,6 +26,3 @@ import { HarnessState } from "../../state/harnessState";
  *    };
  * }
  */
-export async function codeGeneratorPlaceholder(state: HarnessState): Promise<Partial<HarnessState>> {
-  return {};
-}

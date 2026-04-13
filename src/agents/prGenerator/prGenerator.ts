@@ -1,4 +1,3 @@
-import { HarnessState } from "../../state/harnessState";
 
 /**
  * PATH: src/agents/prGenerator/prGenerator.ts
@@ -28,6 +27,3 @@ import { HarnessState } from "../../state/harnessState";
  *    };
  * }
  */
-export async function prGeneratorPlaceholder(state: HarnessState): Promise<Partial<HarnessState>> {
-  return {};
-}

@@ -4,8 +4,7 @@ import {
   Subtask, 
   PipelineStatus, 
   MedplumContextDocument, 
-  LogEntry, 
-  HarnessState 
+  LogEntry
 } from "../state/harnessState";
 import { issueAnalyzer } from "../agents/issueAnalyzer/issueAnalyzer";
 import { medplumExpert } from "../agents/medplumExpert/medplumExpert";

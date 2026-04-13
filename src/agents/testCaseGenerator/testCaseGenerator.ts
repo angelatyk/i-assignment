@@ -1,4 +1,3 @@
-import { HarnessState } from "../../state/harnessState";
 
 /**
  * PATH: src/agents/testCaseGenerator/testCaseGenerator.ts
@@ -26,6 +25,3 @@ import { HarnessState } from "../../state/harnessState";
  *    };
  * }
  */
-export async function testCaseGeneratorPlaceholder(state: HarnessState): Promise<Partial<HarnessState>> {
-  return {};
-}

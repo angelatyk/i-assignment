@@ -1,4 +1,3 @@
-import { HarnessState } from "../../state/harnessState";
 
 /**
  * PATH: src/agents/codeQualityCheck/codeQualityCheck.ts
@@ -28,6 +27,3 @@ import { HarnessState } from "../../state/harnessState";
  *    };
  * }
  */
-export async function codeQualityCheckPlaceholder(state: HarnessState): Promise<Partial<HarnessState>> {
-  return {};
-}

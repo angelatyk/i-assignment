@@ -12,7 +12,8 @@
     "start": "node dist/index.js",
     "build:index": "tsx src/scripts/buildMedplumIndex.ts",
     "build:index:source": "tsx src/scripts/buildMedplumIndex.ts --source",
-    "build:index:fhir": "tsx src/scripts/buildMedplumIndex.ts --fhir"
+    "build:index:fhir": "tsx src/scripts/buildMedplumIndex.ts --fhir",
+    "lint": "eslint src/"
   },
   "dependencies": {
     "@langchain/anthropic": "^0.3.0",
@@ -24,9 +25,13 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.1",
+    "@typescript-eslint/parser": "^8.58.1",
     "@vitest/coverage-v8": "^4.1.4",
+    "eslint": "^9.39.4",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",
+    "typescript-eslint": "^8.58.1",
     "vitest": "^3.2.4"
   }
 }

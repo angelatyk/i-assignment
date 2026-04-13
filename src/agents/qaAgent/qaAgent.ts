@@ -1,4 +1,3 @@
-import { HarnessState } from "../../state/harnessState";
 
 /**
  * PATH: src/agents/qaAgent/qaAgent.ts
@@ -28,6 +27,3 @@ import { HarnessState } from "../../state/harnessState";
  *    };
  * }
  */
-export async function qaAgentPlaceholder(state: HarnessState): Promise<Partial<HarnessState>> {
-  return {};
-}
