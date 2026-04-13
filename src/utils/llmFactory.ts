@@ -66,3 +66,32 @@ export function getModel(): BaseChatModel {
   modelCache.set(cacheKey, instance);
   return instance;
 }
+
+/**
+ * Counts the estimated number of tokens for a given string using the
+ * active model's default tokenizer.
+ */
+export async function countTokens(text: string): Promise<number> {
+  const provider = process.env.LLM_PROVIDER ?? "google";
+
+  // LangChain's BaseChatModel hardcodes tiktoken for getNumTokens. When it sees
+  // a Gemini model name, it doesn't recognize it, dumps a massive stack trace to 
+  // console.warn, and then falls back to `text.length / 4`. 
+  // We skip calling it entirely for Google to keep the console logs clean.
+  if (provider === "google") {
+    return Math.ceil(text.length / 4);
+  }
+
+  const model = getModel();
+  try {
+    // We suppress console.warn temporarily in case Anthropic also triggers LangChain's internal warning
+    const originalWarn = console.warn;
+    console.warn = () => {}; 
+    const tokens = await model.getNumTokens(text);
+    console.warn = originalWarn;
+    
+    return tokens;
+  } catch (error) {
+    return Math.ceil(text.length / 4);
+  }
+}
