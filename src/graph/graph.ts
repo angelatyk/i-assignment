@@ -1,4 +1,3 @@
-// Graph: Main graph assembly and compilation
 import { StateGraph, Annotation, START, END } from "@langchain/langgraph";
 import { 
   GitHubIssue, 
@@ -10,6 +9,7 @@ import {
 } from "../state/harnessState";
 import { issueAnalyzer } from "../agents/issueAnalyzer/issueAnalyzer";
 import { medplumExpert } from "../agents/medplumExpert/medplumExpert";
+import { routeAfterIssueAnalyzer } from "./edges";
 
 /**
  * HarnessGraphAnnotation defines the state channels for LangGraph.
@@ -35,14 +35,7 @@ const builder = new StateGraph(HarnessGraphAnnotation)
   .addEdge(START, "issueAnalyzer")
 
   // Conditional logic for routing after first analyzer
-  .addConditionalEdges("issueAnalyzer", (state: HarnessState) => {
-    // If rejected or failed, end the graph execution
-    if (state.status === "needs_clarification" || state.status === "failed") {
-      return END;
-    }
-    // Otherwise, move to the medplum expert
-    return "medplumExpert";
-  })
+  .addConditionalEdges("issueAnalyzer", routeAfterIssueAnalyzer)
 
   // medplumExpert is the final node before finishing the pipeline
   .addEdge("medplumExpert", END);
