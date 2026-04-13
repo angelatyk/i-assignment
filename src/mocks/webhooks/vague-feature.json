@@ -19,7 +19,7 @@
       }
     ],
     "state": "open",
-    "body": "## Feature\nWe need to add a cool AI summary to the right side of the patient chart so doctors can read things faster.\n\n## Acceptance Criteria\n- Put it on the right side of the screen.\n- It should summarize the patient.\n- Make it look good.",
+    "body": "## Feature\n\nWe need to add a cool AI summary to the right side of the patient chart so doctors can read things faster.\n\n## Acceptance Criteria\n\n- Put it on the right side of the screen.\n- It should summarize the patient.\n- Make it look good.",
     "created_at": "2026-04-12T08:30:00Z",
     "updated_at": "2026-04-12T08:30:00Z"
   },
