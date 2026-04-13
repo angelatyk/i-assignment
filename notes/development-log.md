@@ -1,5 +1,13 @@
 ## Development Log
 
+## System Design
+
+- assignment review
+- Medplum research
+- initial harness architecture planning
+
+- rough estimation of time used: 40 minutes
+
 ## Issue Analyzer
 
 - talked about what makes a good issue for the AI to work on
@@ -62,7 +70,7 @@
 
 - rough estimation of time used: 10 minutes
 
-## Wrapping up rough 3-4 hours session
+## Wrapping up rough 3.5 hours session
 
 - added README.md
 - added pusedocode for remaining agents
