@@ -17,7 +17,7 @@ import type {
   MedplumContextDocument,
   MedplumSourceEntry,
 } from '../../state/harnessState';
-import { getModel } from '../../utils/llmFactory';
+import { getModel, countTokens } from '../../utils/llmFactory';
 import { buildLog } from '../../utils/buildLog';
 import {
   SOURCE_FILTER_SYSTEM_PROMPT,
@@ -222,6 +222,7 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     console.error('[MedplumExpert] Index load failed:', error);
     return {
       status: 'failed',
+      rejectionReason: 'The AI pipeline encountered a technical error: Medplum indexes are missing. Please run `npm run build:index` to generate the required source and FHIR indexes.',
       logs: [
         ...state.logs,
         buildLog('MedplumExpert', 'Index load failed — run npm run build:index first', 'failure'),
@@ -256,14 +257,26 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     .join('\n');
 
   const sourceFilterLlm = llm.withStructuredOutput(SourceFilterSchema);
+  const pass1Message = `SUBTASKS:\n${taskSummary}\n\nSOURCE INDEX:\n${sourceIndexSummary}`;
+
+  const pass1Tokens = await countTokens(pass1Message);
+  console.log(`[MedplumExpert] Pass 1 context size: ~${pass1Tokens} tokens`);
+  if (pass1Tokens > 100000) {
+    return {
+      status: 'failed',
+      rejectionReason: `The AI pipeline encountered a context window overflow during Source filtering. Input size (~${pass1Tokens} tokens) exceeds the 100k safety threshold.`,
+      logs: [
+        ...state.logs,
+        buildLog('MedplumExpert', `Context window overflow in Pass 1 (${pass1Tokens} tokens)`, 'failure'),
+      ],
+    };
+  }
 
   let selectedIds: string[] = [];
   try {
     const sourceFilterResult = await sourceFilterLlm.invoke([
       new SystemMessage(SOURCE_FILTER_SYSTEM_PROMPT),
-      new HumanMessage(
-        `SUBTASKS:\n${taskSummary}\n\nSOURCE INDEX:\n${sourceIndexSummary}`,
-      ),
+      new HumanMessage(pass1Message),
     ]);
     selectedIds = sourceFilterResult.selectedIds;
     console.log(`[MedplumExpert] Pass 1 selected ${selectedIds.length} source entries: ${selectedIds.join(', ')}`);
@@ -271,6 +284,7 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     console.error('[MedplumExpert] Source filter LLM call failed:', error);
     return {
       status: 'failed',
+      rejectionReason: 'The AI pipeline encountered a technical error: the Language Model API failed during Source filtering. Please try running the harness again.',
       logs: [
         ...state.logs,
         buildLog('MedplumExpert', 'Source filter LLM call failed', 'failure'),
@@ -319,14 +333,26 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
   const fhirSchemaNames = Object.keys(fhirIndex.schemas).join(', ');
 
   const fhirFilterLlm = llm.withStructuredOutput(FhirFilterSchema);
+  const pass2Message = `SUBTASKS:\n${taskSummary}\n\nAVAILABLE FHIR SCHEMAS:\n${fhirSchemaNames}`;
+
+  const pass2Tokens = await countTokens(pass2Message);
+  console.log(`[MedplumExpert] Pass 2 context size: ~${pass2Tokens} tokens`);
+  if (pass2Tokens > 100000) {
+    return {
+      status: 'failed',
+      rejectionReason: `The AI pipeline encountered a context window overflow during FHIR filtering. Input size (~${pass2Tokens} tokens) exceeds the 100k safety threshold.`,
+      logs: [
+        ...state.logs,
+        buildLog('MedplumExpert', `Context window overflow in Pass 2 (${pass2Tokens} tokens)`, 'failure'),
+      ],
+    };
+  }
 
   let selectedResourceNames: string[] = [];
   try {
     const fhirFilterResult = await fhirFilterLlm.invoke([
       new SystemMessage(FHIR_FILTER_SYSTEM_PROMPT),
-      new HumanMessage(
-        `SUBTASKS:\n${taskSummary}\n\nAVAILABLE FHIR SCHEMAS:\n${fhirSchemaNames}`,
-      ),
+      new HumanMessage(pass2Message),
     ]);
     selectedResourceNames = fhirFilterResult.selectedResourceNames;
     console.log(
@@ -336,6 +362,7 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
     console.error('[MedplumExpert] FHIR filter LLM call failed:', error);
     return {
       status: 'failed',
+      rejectionReason: 'The AI pipeline encountered a technical error: the Language Model API failed during FHIR filtering. Please try running the harness again.',
       logs: [
         ...state.logs,
         buildLog('MedplumExpert', 'FHIR filter LLM call failed', 'failure'),
@@ -367,6 +394,19 @@ export async function medplumExpert(state: HarnessState): Promise<Partial<Harnes
   ].filter(Boolean).join('\n\n');
 
   const summaryLlm = llm.withStructuredOutput(SummarySchema);
+
+  const pass3Tokens = await countTokens(summaryContext);
+  console.log(`[MedplumExpert] Pass 3 context size: ~${pass3Tokens} tokens`);
+  if (pass3Tokens > 100000) {
+    return {
+      status: 'failed',
+      rejectionReason: `The AI pipeline encountered a context window overflow during Summary Generation. Input size (~${pass3Tokens} tokens) exceeds the 100k safety threshold.`,
+      logs: [
+        ...state.logs,
+        buildLog('MedplumExpert', `Context window overflow in Pass 3 (${pass3Tokens} tokens)`, 'failure'),
+      ],
+    };
+  }
 
   let summary = '';
   try {

@@ -1,7 +1,7 @@
 import { SystemMessage, HumanMessage } from "@langchain/core/messages";
 import { z } from "zod";
 import { HarnessState, Subtask } from "../../state/harnessState";
-import { getModel } from "../../utils/llmFactory";
+import { getModel, countTokens } from "../../utils/llmFactory";
 import { buildLog } from "../../utils/buildLog";
 import { ISSUE_ANALYZER_SYSTEM_PROMPT } from "../../prompts/issueAnalyzerPrompt";
 
@@ -51,6 +51,19 @@ export async function issueAnalyzer(state: HarnessState): Promise<Partial<Harnes
     .filter(Boolean)
     .join("\n");
 
+  const tokens = await countTokens(userMessage);
+  console.log(`[IssueAnalyzer] Context size: ~${tokens} tokens`);
+  if (tokens > 100000) {
+    return {
+      status: "failed",
+      rejectionReason: `The AI pipeline encountered a context window overflow. The issue description is too large (~${tokens} tokens) and exceeds the 100k safety threshold.`,
+      logs: [
+        ...state.logs,
+        buildLog('IssueAnalyzer', `Context window overflow (${tokens} tokens)`, 'failure'),
+      ],
+    };
+  }
+
   let result: AnalyzerResponse;
 
   try {
@@ -62,6 +75,7 @@ export async function issueAnalyzer(state: HarnessState): Promise<Partial<Harnes
     console.error(`[IssueAnalyzer] LLM call or JSON parsing failed:`, error);
     return {
       status: "failed",
+      rejectionReason: "The AI pipeline encountered a technical error: the Language Model API is currently unreachable or returned malformed output. Please try running the harness again.",
       logs: [
         ...state.logs,
         buildLog(
