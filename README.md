@@ -67,6 +67,8 @@ src/
 
 - **[Part 1: Scoping the Assignment and Designing the Harness](https://youtu.be/vXDZ9Zny53o)**
 - **[Part 2: Environment Setup and MVP Definition](https://youtu.be/mQKbwhBI-a8)**
+- **[Part 3: Building the Issue Analyzer Agent](https://youtu.be/fJOm0keTHts)**
+
 
 ## Getting Started
 
