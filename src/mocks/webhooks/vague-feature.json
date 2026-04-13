@@ -1,0 +1,39 @@
+{
+  "action": "opened",
+  "issue": {
+    "url": "https://api.github.com/repos/angelatyk/i-assignment/issues/103",
+    "repository_url": "https://api.github.com/repos/angelatyk/i-assignment",
+    "html_url": "https://github.com/angelatyk/i-assignment/issues/103",
+    "id": 1000003,
+    "number": 103,
+    "title": "Add an AI summary side panel to the patient chart",
+    "user": {
+      "login": "product-manager-user",
+      "id": 503,
+      "type": "User"
+    },
+    "labels": [
+      {
+        "name": "enhancement",
+        "color": "a2eeef"
+      }
+    ],
+    "state": "open",
+    "body": "## Feature\nWe need to add a cool AI summary to the right side of the patient chart so doctors can read things faster.\n\n## Acceptance Criteria\n- Put it on the right side of the screen.\n- It should summarize the patient.\n- Make it look good.",
+    "created_at": "2026-04-12T08:30:00Z",
+    "updated_at": "2026-04-12T08:30:00Z"
+  },
+  "repository": {
+    "id": 2000001,
+    "name": "i-assignment",
+    "full_name": "angelatyk/i-assignment",
+    "owner": {
+      "login": "angelatyk",
+      "id": 101
+    }
+  },
+  "sender": {
+    "login": "product-manager-user",
+    "id": 503
+  }
+}

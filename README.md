@@ -61,6 +61,9 @@ src/
 
 - **[notes/development-log.md](notes/development-log.md)**: A changelog capturing key milestones, challenges, and iterative decisions made during development.
 - **[notes/notes.md](notes/notes.md)**: Raw technical notes, thought processes, and references (such as GitHub payload examples) used to guide building the system.
+- **[notes/issue-101-ba.md](notes/issue-101-ba.md)**: A mock issue written from a Business Analyst's perspective ([Raw JSON](src/mocks/webhooks/ba-drug-interaction.json), based on the work order in the assignment brief). Used to verify the agent's product-clarity gating.
+- **[notes/issue-102-tech-lead.md](notes/issue-102-tech-lead.md)**: A mock issue written from a Tech Lead's perspective ([Raw JSON](src/mocks/webhooks/tech-lead-drug-interaction.json), based on the work order in the assignment brief). Used to verify the agent's subtask decomposition with deep technical detail.
+- **[notes/issue-103-vague.md](notes/issue-103-vague.md)**: An intentionally vague feature request with undefined criteria ([Raw JSON](src/mocks/webhooks/vague-feature.json)). Used to demonstrate the pipeline's ability to safely reject and request human clarification.
 - **[docs/ARCHITECTURE_DESIGN_DRAFT.md](docs/ARCHITECTURE_DESIGN_DRAFT.md)**: The original blueprint for the multi-stage AI agent pipeline.
 
 ## Videos
