@@ -1,16 +1,20 @@
 # AI Engineering Harness
 
-An AI engineering harness built to automate the Software Development Life Cycle (SDLC). This project is a multi-agent orchestration system that takes a GitHub issue and autonomously delivers a tested pull request containing implementation code—without human intervention.
+An AI engineering harness built to automate the Software Development Life Cycle (SDLC). This project is a multi-agent orchestration system that takes a GitHub issue and autonomously delivers a tested pull request containing implementation code ready for human review.
 
-Currently, the machinery is designed to integrate deeply with the [Medplum SDK](https://www.medplum.com/) and FHIR standards.
+Currently, the machinery is designed to integrate deeply with the [Medplum Developer Platform](https://github.com/medplum/medplum) and FHIR standards.
 
 ## Architecture & Pipeline
 
-The harness is built around a stateful agent graph powered by [LangGraph](https://github.com/langchain-ai/langgraphjs). The system is designed as a multi-stage pipeline where specialized agents progressively build the `HarnessState` via conditional routing.
+The harness is built around a stateful multi-agent workflow powered by [LangGraph](https://www.langchain.com/langgraph). The system operates as a stateful agent graph, where specialized agents progressively build the `HarnessState` through iterative loops and conditional routing.
 
 ![Multi-Agent System Design](docs/ai-engineering-harness-system-design_v2.png)
 
-1. **Plan Phase**: Validate requirements and gather domain context (Currently orchestrated via `Issue Analyzer` and `Medplum Expert`).
+## Agentic SDLC
+
+The harness mirrors an Agentic SDLC, transforming the traditional software development lifecycle into an autonomous, state-driven process. By moving through these four phases, the system replaces manual hand-offs with agentic transitions:
+
+1. **Plan Phase**: Validate requirements and gather domain context. Handled by the `Issue Analyzer` and `Medplum Expert` agents.
 2. **Build Phase**: Generate implementation code and tests.
 3. **Test Phase**: Verify code against requirements and quality standards.
 4. **Deploy Phase**: Open a pull request for human review.
@@ -19,22 +23,22 @@ The harness is built around a stateful agent graph powered by [LangGraph](https:
 
 #### 🟢 Developed
 
-- **Issue Analyzer (`src/agents/issueAnalyzer`)**: The gatekeeper. It reviews incoming GitHub issues for "product clarity". It either decomposes the issue into actionable subtasks or rejects it with a request for clarification.
+- **Issue Analyzer (`src/agents/issueAnalyzer`)**: The gatekeeper. It reviews incoming GitHub issues for "product clarity". It either decomposes the issue into ordered, actionable subtasks or rejects it with a request for clarification.
 - **Medplum Expert (`src/agents/medplumExpert`)**: Provides domain-specific context for Medplum/FHIR. It indexes the SDK and OpenAPI schemas to select exactly the components and resource types needed for a task.
 
 #### 🏗️ Planned / Future
 
 - **Test Case Generator**: Will autonomously generate Vitest test cases based on the issue's acceptance criteria before code is written.
-- **Code Generator**: Will consume the task list and Medplum context to author the implementation code.
-- **Code Quality Check**: An automated "Linter Agent" that ensures the generated code meets ESLint standards and modularity requirements.
-- **QA Agent**: An agent dedicated to running end-to-end tests and validating that the output actually solves the user's problem.
+- **Code Generator**: Will consume the task list, Medplum context, and repo map to generate the implementation code.
+- **Code Quality Check**: A deterministic script node that runs ESLint, TypeScript compilation, and modularity checks on the generated code. No LLM involved — errors feed directly back to the Code Generator as structured feedback for retry.
+- **QA Agent**: Runs the pre-generated test cases against the generated code, validates acceptance criteria, and tests edge cases and error states to try to break the implementation before it reaches a human reviewer.
 - **PR Generator**: The final stage that assembles the technical documentation and opens the GitHub Pull Request.
 
 ## Tech Stack
 
 - **Language**: TypeScript (Strict Mode)
 - **Orchestration**: LangGraph (`@langchain/langgraph`)
-- **LLM Integration**: LangChain (`@langchain/core`)
+- **LLM Integration**: LangChain Core (`@langchain/core`), Anthropic (`@langchain/anthropic`), Google Gemini (`@langchain/google-genai`)
 - **Validation**: Zod
 - **Testing**: Vitest
 - **Environment**: Node.js
@@ -74,6 +78,7 @@ src/
 - **[Part 1: Scoping the Assignment and Designing the Harness](https://youtu.be/vXDZ9Zny53o)**
 - **[Part 2: Environment Setup and MVP Definition](https://youtu.be/mQKbwhBI-a8)**
 - **[Part 3: Building the Issue Analyzer Agent](https://youtu.be/fJOm0keTHts)**
+- **[Part 4: Evaluating Medplum Context Approaches](https://youtu.be/3wdrCjvpVlw)**
 
 ## Getting Started
 
@@ -142,12 +147,3 @@ npm run test:integration:medplum
 # Run end-to-end integration across the entire pipeline
 npm run test:e2e
 ```
-
-## Development & Contribution Standard
-
-When contributing to this system, strictly adhere to the following rules defined in the architecture plan:
-
-- **Strict TypeScript**: No `any`, no implicit returns, and no unchecked nulls. Standardize shapes using `interfaces`.
-- **Single Responsibility**: An agent should only do one thing. Never duplicate logic across agents; place shared helpers in `src/utils`.
-- **Stateless Mutations**: Agents should _never_ mutate state directly. Instead, they must return their mutations via the node function return value for LangGraph to reduce into the global state.
-- **Fail Gracefully**: Wrap all LLM and JSON parsing calls in `try/catch` and emit precise status failures to the graph logs.
