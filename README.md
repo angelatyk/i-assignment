@@ -65,13 +65,11 @@ src/
 
 ## Key Deliverables
 
-For the purpose of this assignment, the following core deliverables capture the design and requirements-driven philosophy of the harness:
-
 - 📐 **Architecture Design**: [docs/ARCHITECTURE_DESIGN_FINAL.pdf](docs/ARCHITECTURE_DESIGN_FINAL.pdf) — The blueprint for the stateful multi-agent system and prompt engineering strategy.
 - 📋 **The "Good Ticket" Standard**: [notes/anatomy-of-an-actionable-ticket](notes/anatomy-of-an-actionable-ticket) — The specification for structured, developer-ready issues (see **Section 3.1.1** of the Architecture Design for a deep dive).
-- 🧪 **Mock Issues (Core Demo)**:
-  - [notes/issue-101-ba.md](notes/issue-101-ba.md) — Product-level requirements check.
-  - [notes/issue-102-tech-lead.md](notes/issue-102-tech-lead.md) — Technical subtask decomposition.
+- 🧪 **The Drug Interaction Checker Issues (Part of Core Demo)**:
+  - [notes/issue-101-ba.md](notes/issue-101-ba.md) — Business Analyst perspective.
+  - [notes/issue-102-tech-lead.md](notes/issue-102-tech-lead.md) — Tech Lead perspective.
 
 ## Documentation
 
