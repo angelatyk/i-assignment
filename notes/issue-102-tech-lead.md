@@ -1,29 +1,37 @@
 # Issue #102: MED-452: Implement FHIR-compliant Drug Interaction Checker Component
+
 **Author:** Tech Lead (`tech-lead-user`)
 
 ## Summary
-Implement a reusable React component for the Medplum Workbench that performs safety checks on new medications. The component must interface with the FHIR backend to identify contraindications before clinicians finalize a prescription.
+
+Implement a reusable React component for the Medplum workspace that orchestrates safety checks for new medications. The component serves as the integration point between the patient's existing clinical record and an external clinical decision support (CDS) service, surfacing risks before a prescription is finalized.
 
 ## User Story
+
 As a platform engineer, I need a robust, domain-aware safety component so that clinical applications built on Medplum can ensure FHIR-compliant drug safety checks are performed at the point of care.
 
 ## Acceptance Criteria
-- [ ] Component consumes a proposed `MedicationRequest` and validates against active `MedicationRequest` and `AllergyIntolerance` resources.
-- [ ] Must handle asynchronous loading states of the Medplum API.
-- [ ] UI must accurately render four distinct states: No Interactions, Minor Warnings, Critical Warnings, and API Error (500/404).
-- [ ] Logic must filter by patient demographic data (age, sex) retrieved from the `Patient` resource.
-- [ ] Interaction results should be storable as a FHIR `Observation` or `Linkage` for audit purposes.
-- [ ] The component must be reactive to changes in the patient's record context within the Workbench.
+
+- [ ] **Data Orchestration:** Component retrieves the active `Patient` context, including all active `MedicationRequest` and `AllergyIntolerance` resources.
+- [ ] **Interface Abstraction:** Implement a clean interface/gate for the external Drug Interaction API to allow for easy swapping between mock and production providers.
+- [ ] **State Management:** Accurately render transitions between `Idle`, `Loading`, `Success` (with result variants), and `Error` states.
+- [ ] **Severity Mapping:** Map external service responses to FHIR-aligned severity levels (Critical, Warning, Minor).
+- [ ] **Persistence:** Successfully record interaction findings back to the Medplum server as FHIR resources (e.g., `DetectedIssue` or `Observation`).
+- [ ] **Context Awareness:** The component must reactively update if the patient’s clinical record changes during the session.
 
 ## Domain Context
-- We are using a third-party interaction service via a FHIR-bridge. 
-- All interactions must be weighted by clinical severity data provided by the upstream FHIR server.
+
+- The interaction logic is external; this ticket focuses on the **API Gateway** pattern on the Medplum side to encapsulate those calls.
+- Results must consider demographic data (Age/Sex) from the `Patient` resource to identify contraindications.
 
 ## Out of Scope
-- Implementing the actual medication bridge service (this issue is for the frontend component and orchestration).
-- Support for non-FHIR data sources.
+
+- Building the pharmacology/logic engine (third-party API handles this).
+- UI for modifying existing patient medications or allergies.
 
 ## Technical Notes
-- Ensure compatibility with Medplum's `@medplum/react` components and themes.
-- Interaction checks should be debounced if triggered by rapid input.
-- Error handling must distinguish between "No results found" (200 OK) and "Service Unavailable" (503).
+
+- **Component Library:** Utilize `@medplum/react` hooks (e.g., `useMedplum`, `useResource`) for data fetching and consistent styling.
+- **API Strategy:** Define a clear abstraction layer for the "Drug Interaction Gate." This should be an interface that can be fulfilled by a `MockInteractionService` for testing.
+- **Resource Linking:** When saving results, ensure appropriate `reference` links are established between the new `MedicationRequest` and the resulting safety resource.
+- **Performance:** Debounce or memoize calls to the external service to prevent unnecessary overhead during rapid clinical entry.

@@ -7,10 +7,10 @@
  * ============================================================================
  * 
  * DESCRIPTION:
- * The final stage of the workflow. When the issue is successfully decomposed, coded,
- * and tested successfully, this agent aggregates the context from the `HarnessState` 
- * and opens a GitHub Pull Request natively describing what was built, assumptions made, 
- * and any constraints applied.
+* The final stage of the workflow and the human handoff step. This agent aggregates 
+ * the full execution trail from `HarnessState` to assemble a structured, reviewable 
+ * Pull Request. It maps subtasks to changes, summarizes validation results, and 
+ * surfacing "Known Gaps" to build reviewer trust.
  * 
  * HIGH-LEVEL PSEUDOCODE:
  * 

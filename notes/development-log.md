@@ -85,4 +85,14 @@
 - implemented a post-LLM grounding pass that strips truly missing IDs and injects a "Negative Context" note into the summary pass to prevent verbal leaks
 - discovered model was attempting to import TypeScript types as runtime components; fixed by hard-filtering the 'type' category out of the source index before sending it to the LLM
 
+
 - rough estimation of time used: 30 minutes
+
+## Final Submission & Packaging
+
+- Added final architecture design documentation (PDF)
+- Refined agent mission statements and JSDoc descriptive headers for developed agents
+- Synchronized mock webhook payloads with the latest requirements specifications in `notes/`
+- Enhanced README with a "Key Deliverables" section and deep-dive cross-references
+
+- rough estimation of time used: 20 minutes

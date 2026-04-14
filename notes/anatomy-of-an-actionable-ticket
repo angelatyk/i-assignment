@@ -1,0 +1,35 @@
+# The "Good Ticket" Standard
+
+A well-structured ticket is critical for reliable analysis, planning, and execution. Each section exists to provide clear intent, enforce boundaries, and define observable outcomes. Focus on describing behavior (what happens) rather than implementation (how it’s built), and ensure acceptance criteria are binary and testable.
+
+> **Note:** For a deeper dive, see Section 3.1.1: _The Anatomy of an Actionable Ticket_ in the Architecture Documentation.
+
+## Summary
+
+[Briefly describe the feature and its purpose. Why are we building this?]
+
+## User Story
+
+As a [persona], I want to [action], so that [benefit].
+
+## Acceptance Criteria
+
+- [ ] [Binary behavior 1: e.g., "Component displays a list of active MedicationRequests"]
+- [ ] [Binary behavior 2: e.g., "A 'Critical' alert is shown if an interaction is found"]
+- [ ] [Binary behavior 3: e.g., "Displays 'No interactions found' for clean records"]
+- [ ] [Binary behavior 4: e.g., "Handles 500 API errors with a retry button"]
+
+## Domain Context (Optional)
+
+- [List hidden business rules, e.g., "Clinical bypass is allowed for 'Minor' warnings"]
+- [Define severity logic or external service dependencies]
+
+## Out of Scope
+
+- [Action 1: e.g., "Editing the medication list from this view"]
+- [Action 2: e.g., "Persistent storage of the interaction report"]
+
+## Technical Notes (Optional)
+
+- [e.g., "Must utilize @medplum/react component tokens"]
+- [e.g., "Target resource types: Patient, MedicationRequest"]

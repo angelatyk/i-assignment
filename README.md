@@ -63,6 +63,16 @@ src/
 └── utils/              # Shared helper functions (e.g., LLM Factory, Token Counter)
 ```
 
+## Key Deliverables
+
+For the purpose of this assignment, the following core deliverables capture the design and requirements-driven philosophy of the harness:
+
+- 📐 **Architecture Design**: [docs/ARCHITECTURE_DESIGN_FINAL.pdf](docs/ARCHITECTURE_DESIGN_FINAL.pdf) — The blueprint for the stateful multi-agent system and prompt engineering strategy.
+- 📋 **The "Good Ticket" Standard**: [notes/anatomy-of-an-actionable-ticket](notes/anatomy-of-an-actionable-ticket) — The specification for structured, developer-ready issues (see **Section 3.1.1** of the Architecture Design for a deep dive).
+- 🧪 **Mock Issues (Core Demo)**:
+  - [notes/issue-101-ba.md](notes/issue-101-ba.md) — Product-level requirements check.
+  - [notes/issue-102-tech-lead.md](notes/issue-102-tech-lead.md) — Technical subtask decomposition.
+
 ## Documentation
 
 - **[notes/development-log.md](notes/development-log.md)**: A changelog capturing key milestones, challenges, and iterative decisions made during development.
@@ -79,6 +89,7 @@ src/
 - **[Part 2: Environment Setup and MVP Definition](https://youtu.be/mQKbwhBI-a8)**
 - **[Part 3: Building the Issue Analyzer Agent](https://youtu.be/fJOm0keTHts)**
 - **[Part 4: Evaluating Medplum Context Approaches](https://youtu.be/3wdrCjvpVlw)**
+- **[Part 5: Presentation and End-to-End Review](https://youtu.be/DtU9eZ1BHPY)**
 
 ## Getting Started
 

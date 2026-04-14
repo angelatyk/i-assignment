@@ -4,33 +4,36 @@
 
 ## Summary
 
-We need a way for clinicians to quickly verify if a new medication they are prescribing will have dangerous interactions with a patient's current medications or known allergies. This is a critical safety feature to prevent adverse drug events.
+To enhance patient safety, we are introducing an automated safety check during the prescribing process. This tool will cross-reference a proposed new medication against a patient’s existing health profile to identify potential risks before the prescription is finalized.
 
 ## User Story
 
-As a clinician, I want to be automatically alerted to potential drug-drug or drug-allergy interactions when I prescribe a new medication, so that I can ensure patient safety and avoid harmful complications.
+As a **Clinician**, I want to receive an immediate safety analysis when selecting a new medication for a patient, so that I can prevent dangerous drug-to-drug interactions, allergic reactions, or demographic-specific risks (such as age-appropriate restrictions).
 
 ## Acceptance Criteria
 
-- [ ] The system checks for interactions against the patient's active medication list.
-- [ ] The system checks for interactions against the patient's documented allergies.
-- [ ] Alerts must be categorized by severity (Critical, Warning, Minor).
-- [ ] The system must account for patient age and sex in interaction logic.
-- [ ] If no interactions are found, a clear "No interactions found" message is displayed.
-- [ ] A loading state is shown while the safety check is in progress.
-- [ ] If the check fails (e.g., service unavailable), a clear error message is shown to the clinician.
+- [ ] **Comprehensive Screening:** The system must automatically analyze the new medication against the patient’s:
+  - Current active medications.
+  - Documented allergies and intolerances.
+  - Demographic factors (specifically Age and Sex).
+- [ ] **Severity Tiering:** Identified risks must be clearly labeled as **Critical**, **Warning**, or **Minor**.
+- [ ] **Clearance Visibility:** If the check returns no risks, the clinician must see a "No interactions found" confirmation.
+- [ ] **In-Progress Feedback:** The UI must indicate when the check is running so the clinician knows the system is active.
+- [ ] **Reliability Handling:** If the safety service is unreachable, the system must inform the clinician that the check could not be completed and provide a way to try again.
 
 ## Domain Context
 
-- Critical interactions are life-threatening and must be high-visibility.
-- The clinician's existing workflow should be interrupted as little as possible unless a Critical or Warning interaction is found.
+- **Clinical Bypass:** While the system provides warnings, the clinician retains ultimate authority. For **Minor** or **Warning** tiers, the clinician should be able to acknowledge the risk and proceed.
+- **Demographic Sensitivity:** Some medications are contraindicated based on age (e.g., pediatric vs. geriatric) or sex (e.g., pregnancy risks). These must be caught by the checker.
+- **Source of Truth:** The check must happen _before_ the prescription is added to the patient's permanent record.
 
 ## Out of Scope
 
-- Manually adding medications to the patient's record from this screen.
-- Finalizing the prescription order (this component only does the check).
+- **Medication Reconciliation:** Adding, editing, or removing old medications from the patient’s profile within this specific view.
+- **Dose Calculation:** Automatically calculating or suggesting the specific mg/kg dosage for the clinician.
+- **Order Fulfillment:** Finalizing the prescription or sending it to a pharmacy.
 
 ## Other Notes
 
-- The UI should be responsive and provide immediate visual feedback.
-- Error states must be handled gracefully so the clinician can still proceed if they choose to override (standard medical bypass).
+- **Workflow Impact:** The check should be triggered as soon as a medication is selected, but before the final "Sign/Authorize" step.
+- **Visual Cues:** We should use standard medical color coding (e.g., Red for Critical, Yellow for Warning) to ensure the severity is understood at a glance.
