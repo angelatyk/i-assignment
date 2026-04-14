@@ -6,9 +6,11 @@ Currently, the machinery is designed to integrate deeply with the [Medplum SDK](
 
 ## Architecture & Pipeline
 
-The harness is built around a stateful agent graph powered by [LangGraph](https://github.com/langchain-ai/langgraphjs). The system is designed as a multi-stage pipeline where specialized agents progressively build the `HarnessState`.
+The harness is built around a stateful agent graph powered by [LangGraph](https://github.com/langchain-ai/langgraphjs). The system is designed as a multi-stage pipeline where specialized agents progressively build the `HarnessState` via conditional routing.
 
-1. **Plan Phase**: Validate requirements and gather domain context.
+![Multi-Agent System Design](docs/ai-engineering-harness-system-design_v2.png)
+
+1. **Plan Phase**: Validate requirements and gather domain context (Currently orchestrated via `Issue Analyzer` and `Medplum Expert`).
 2. **Build Phase**: Generate implementation code and tests.
 3. **Test Phase**: Verify code against requirements and quality standards.
 4. **Deploy Phase**: Open a pull request for human review.
@@ -54,7 +56,7 @@ src/
 ├── prompts/            # Centralized system prompts for LLMs
 ├── scripts/            # Build and utility scripts
 ├── state/              # Shared HarnessState definition and LangGraph annotations
-└── utils/              # Shared helper functions (e.g. LLM Factory)
+└── utils/              # Shared helper functions (e.g., LLM Factory, Token Counter)
 ```
 
 ## Documentation
@@ -72,7 +74,6 @@ src/
 - **[Part 1: Scoping the Assignment and Designing the Harness](https://youtu.be/vXDZ9Zny53o)**
 - **[Part 2: Environment Setup and MVP Definition](https://youtu.be/mQKbwhBI-a8)**
 - **[Part 3: Building the Issue Analyzer Agent](https://youtu.be/fJOm0keTHts)**
-
 
 ## Getting Started
 
@@ -114,16 +115,32 @@ The `medplumExpert` requires localized source and FHIR schema indexes to provide
 npm run build:index
 ```
 
-### Running Tests
+### Running the Live Demo
 
-We prioritize testing behavior and output contracts. Every agent has a dedicated test suite.
+The harness includes an interactive live demo runner designed to trace multiple mock issues (both well-specified and intentionally vague) through the LangGraph pipeline, demonstrating requirements gating and domain context generation.
 
 ```bash
-# Run all tests
+# Run the complete multi-agent orchestration demo
+npm run demo
+```
+
+### Running Tests
+
+We prioritize testing behavior and output contracts. Every agent has a dedicated test suite, and the state graph has full unit test coverage.
+
+```bash
+# Run all unit tests
 npm run test
 
 # Run tests with coverage
 npm run test:coverage
+
+# Run integration checks for individual agents
+npm run test:integration:analyzer
+npm run test:integration:medplum
+
+# Run end-to-end integration across the entire pipeline
+npm run test:e2e
 ```
 
 ## Development & Contribution Standard
