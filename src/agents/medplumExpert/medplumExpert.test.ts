@@ -15,6 +15,7 @@ import * as fs from 'fs';
 vi.mock('fs');
 vi.mock('../../utils/llmFactory', () => ({
   getModel: vi.fn(),
+  countTokens: vi.fn().mockResolvedValue(100),
 }));
 
 // Import after mocks are declared
